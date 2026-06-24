@@ -1,0 +1,115 @@
+#*.iml
+#.gradle
+#/local.properties
+#/.idea/caches
+#/.idea/libraries
+#/.idea/modules.xml
+#/.idea/workspace.xml
+#/.idea/navEditor.xml
+#/.idea/assetWizardSettings.xml
+#.DS_Store
+#/build
+#/captures
+#.externalNativeBuild
+#.cxx
+#local.properties
+#gitignore
+
+
+
+
+
+
+# =========================================
+# 빌드 관련 파일 (Build files)
+# =========================================
+# Gradle이 생성하는 빌드 결과물 폴더입니다. 용량이 매우 크고 매번 새로 생성됩니다.
+build/
+/build
+*/build
+**/build
+
+# =========================================
+# 로컬 설정 파일 (Local configuration)
+# =========================================
+# 각 개발자 PC 환경에 따라 달라지는 로컬 설정 파일입니다.
+# 이 파일이 공유되면 다른 사람의 환경에서 프로젝트가 열리지 않을 수 있습니다.
+.idea/
+*.iml
+.gradle/
+local.properties
+# Mac OS 관련 시스템 파일
+.DS_Store
+Thumbs.db
+# 내 컴퓨터의 SDK 경로와 API 키 등이 들어있으므로 절대 올리면 안 됨
+secret.properties
+key.properties
+# 안드로이드 스튜디오(IntelliJ) IDE 설정
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/deployment.xml
+# =========================================
+# Gradle 관련 파일
+# =========================================
+# Gradle 캐시 및 래퍼 관련 파일
+.gradletasknamecache
+.gradle-scan/
+# Gradle 데몬이 생성하는 로그 및 파일들
+/gradle-daemon-outputs/
+# 2. Gradle 캐시 및 설정
+.gradle
+!gradle-wrapper.jar
+
+# =========================================
+# 서명 및 민감 정보 (Signing and sensitive information)
+# =========================================
+# 앱 서명에 사용되는 키스토어 파일입니다. 외부에 절대 노출되면 안 됩니다.
+*.jks
+*.keystore
+
+# API 키나 다른 민감 정보를 저장하는 파일 (만약 사용한다면)
+# 예: secrets.properties
+*.properties
+
+# =========================================
+# 캡처 및 프로파일링 파일 (Capture and profiling files)
+# =========================================
+# Android Studio의 프로파일러가 생성하는 파일들입니다.
+*.hprof
+*.prof
+*.capture
+
+# =========================================
+# 생성된 소스 코드 및 리소스 (Generated sources and resources)
+# =========================================
+# Google Services 플러그인이 생성하는 파일
+app/google-services.json
+# <- 팀원과 공유해야 한다면 이 줄은 삭제하세요. # 하지만 보통 로컬에서 직접 다운받아 사용하는 경우가 많습니다.
+# =========================================
+# 실행 파일 및 아카이브 (Executables and archives)
+# =========================================
+# 최종 빌드 산출물인 APK, AAB, JAR 파일 등
+*.apk
+*.aab
+*.jar
+*.aar
+*.ap_
+# =C/C++ NDK 관련 파일
+# =========================================
+# 만약 NDK를 사용한다면 생성되는 빌드 폴더들
+/cxx/
+*/cxx/
+/gen/
+/obj/
+/local/
+/tmp/
+/captures
+.externalNativeBuild
+.cxx
+/inspectionProfiles
+
+.kotlin/errors
