@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "BusCame"
 include(":app")
- 
+
+include(":common")
