@@ -43,6 +43,8 @@ kotlin{
 }
 
 dependencies {
+    implementation(project(":common"))
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.android.core)
     implementation(libs.bundles.compose)
