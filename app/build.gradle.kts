@@ -38,12 +38,14 @@ android {
         compose = true
     }
 }
-kotlin{
+kotlin {
     jvmToolchain(21)
 }
 
 dependencies {
     implementation(project(":common"))
+    implementation(project(":common:design"))
+    implementation(project(":features:schedule"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.android.core)
