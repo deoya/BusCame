@@ -13,13 +13,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import com.hye.common.design.theme.DesignTheme
-import com.hye.common.design.ui.text.LabelMedium
+import com.hye.common.design.ui.text.LabelText
+import com.hye.common.design.ui.text.TextStyleSize
 import com.hye.common.design.util.clickableSingle
 
 
 @Composable
 fun Tag(name: String, color: Color = DesignTheme.colors.info) =
-    LabelMedium(text = name, color = color, fontWeight = FontWeight.Bold)
+    LabelText(
+        style = TextStyleSize.Medium,
+        text = name,
+        color = color,
+        fontWeight = FontWeight.Bold
+    )
 
 
 @Composable

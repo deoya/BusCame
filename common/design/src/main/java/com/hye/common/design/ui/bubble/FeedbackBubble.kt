@@ -15,7 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.common.light
-import com.hye.common.design.ui.text.LabelSmall
+import com.hye.common.design.ui.text.LabelText
+import com.hye.common.design.ui.text.TextStyleSize
 
 @Composable
 fun FeedbackBubble(message: String) {
@@ -37,7 +38,12 @@ fun FeedbackBubble(message: String) {
                 tint = DesignTheme.colors.background,
                 modifier = Modifier.size(DesignTheme.dimens.iconMedium)
             )
-            LabelSmall(message, color = DesignTheme.colors.background, fontWeight = FontWeight.Bold)
+            LabelText(
+                message,
+                color = DesignTheme.colors.background,
+                fontWeight = FontWeight.Bold,
+                style = TextStyleSize.Small
+            )
         }
     }
 }
