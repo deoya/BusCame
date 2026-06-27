@@ -23,7 +23,7 @@ import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.theme.alphaPrimary
 import com.hye.common.design.theme.toPx
 import com.hye.common.design.theme.toSp
-import com.hye.common.design.ui.text.TextBody
+import com.hye.common.design.ui.text.BodyText
 
 // 터미널 HUD 스타일의 이중 테두리 간격 캡슐화
 private object RadioBubbleTokens {
@@ -88,7 +88,7 @@ fun RadioBubble(
         if (isTyping) {
             TypingIndicator(color)
         } else {
-            TextBody(
+            BodyText(
                 text = message,
                 fontWeight = FontWeight.Bold,
                 lineHeight = fontHeight
