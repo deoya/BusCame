@@ -1,0 +1,48 @@
+package com.hye.common.design.ui.icon
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.hye.common.design.theme.DesignTheme
+
+private object IconBoxTokens {
+    val DefaultSize = 52.dp
+}
+
+@Composable
+fun StyledIconBox(
+    modifier: Modifier = Modifier,
+    boxSize: Dp? = IconBoxTokens.DefaultSize,
+    cornerRadius: Dp = DesignTheme.dimens.radiusMd,
+    boxColor: Color? = null,
+    boxBrush: Brush? = null,
+    icon: @Composable () -> Unit
+) {
+    val sizeModifier = boxSize?.let { Modifier.size(it) } ?: Modifier
+
+    val finalBrush = when {
+        boxBrush != null -> boxBrush
+        boxColor != null -> SolidColor(boxColor)
+        else -> SolidColor(DesignTheme.colors.surfaceVariant)
+    }
+
+    Box(
+        modifier = modifier
+            .then(sizeModifier)
+            .clip(RoundedCornerShape(cornerRadius))
+            .background(finalBrush),
+        contentAlignment = Alignment.Center
+    ) {
+        icon()
+    }
+}

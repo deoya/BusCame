@@ -23,3 +23,6 @@ rootProject.name = "BusCame"
 include(":app")
 
 include(":common")
+include(":features")
+include(":features:schedule")
+include(":common:design")

@@ -5,11 +5,14 @@ plugins {
 }
 
 android {
-    namespace = "com.hye.common"
+    namespace = "com.hye.common.design"
     compileSdk {
         version = release(36)
     }
 
+    defaultConfig {
+        minSdk = 26
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -24,8 +27,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":common:design"))
-
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.android.core)
     implementation(libs.bundles.compose)

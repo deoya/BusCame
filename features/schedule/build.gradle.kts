@@ -1,13 +1,19 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.hye.common"
+    namespace = "com.hye.features.schedule"
     compileSdk {
         version = release(36)
+    }
+
+    defaultConfig {
+        minSdk = 26
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     compileOptions {
@@ -24,7 +30,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":common:design"))
+    implementation(":common")
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.android.core)
