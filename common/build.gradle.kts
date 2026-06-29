@@ -5,9 +5,7 @@ plugins {
 
 android {
     namespace = "com.hye.common"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
