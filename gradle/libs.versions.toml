@@ -1,32 +1,29 @@
 [versions]
 # 1-1. Core & Plugins
-agp = "8.13.2"
+agp = "9.0.1" #"8.13.2"
 kotlin = "2.4.0"
-ksp = "2.0.21-1.0.27"
-
+ksp = "2.3.9"
 # 1-2. Android Core & Lifecycle
 coreKtx = "1.17.0"
 lifecycleRuntimeKtx = "2.9.4"
-
 # 2. Compose Core & UI
 activityCompose = "1.13.0"
 composeBom = "2026.06.00"
-jetbrainsKotlinJvm = "2.4.0"
+jetbrainsKotlinJvm = "2.3.0"
 materialIconsExtended = "1.7.8"
-
 # 3. Tests
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
-
+mockk = "1.14.7"
+turbine = "1.2.0"
 # 4. Coroutines (State Management)
 coroutines = "1.11.0"
-
 # 5. Dependency Injection (Hilt)
+javaxInject = "1"
 hilt = "2.59.2"
 appcompat = "1.6.1"
 material = "1.10.0"
-
 # 6. log
 timber = "5.0.1"
 
@@ -52,16 +49,19 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 # 4. Coroutines
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 
 # 5. Dependency Injection (Hilt)
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-
 
 # 6. Logging
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
@@ -75,8 +75,8 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin"}
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 
 # Plugins for Dependency Injection
 hilt-gradle = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
@@ -100,4 +100,11 @@ compose = [
 
 hilt = [
     "hilt-android",
+]
+
+test = [
+    "junit",
+    "kotlinx-coroutines-test",
+    "mockk",
+    "turbine"
 ]
