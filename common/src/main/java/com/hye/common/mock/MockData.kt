@@ -63,26 +63,11 @@ data class BusArrivalInfo(
         }
 }
 
-data class WorkSchedule(
-    val activeDays: Set<DayOfWeek> = setOf(
-        DayOfWeek.MON,
-        DayOfWeek.TUE,
-        DayOfWeek.WED,
-        DayOfWeek.THU,
-        DayOfWeek.FRI
-    ),
-    val commuteHour: Int = 9, val commuteMinute: Int = 0,
-    val offworkHour: Int = 18, val offworkMinute: Int = 0
-)
 
 data class RouteConfig(
     val departureStop: String = "강남역 10번 출구",
     val arrivalStop: String = "여의도역"
 )
-
-enum class DayOfWeek(val label: String) {
-    MON("월"), TUE("화"), WED("수"), THU("목"), FRI("금"), SAT("토"), SUN("일")
-}
 
 enum class BoardingStatus(
     val bgColor: Color,

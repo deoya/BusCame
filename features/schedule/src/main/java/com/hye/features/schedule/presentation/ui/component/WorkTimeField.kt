@@ -8,9 +8,9 @@ import androidx.compose.material.icons.outlined.NightsStay
 import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.hye.common.design.mock.WorkSchedule
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.filed.GenericClickableField
+import com.hye.domain.model.WorkSchedule
 
 @Composable
 fun WorkTimeField(

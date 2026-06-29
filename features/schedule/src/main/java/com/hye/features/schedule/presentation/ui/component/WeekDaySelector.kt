@@ -12,10 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.hye.common.design.mock.DayOfWeek
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.text.LabelText
 import com.hye.common.design.ui.text.TextStyleSize
+import com.hye.domain.model.DayOfWeek
 
 @Composable
 fun WeekDaySelector(

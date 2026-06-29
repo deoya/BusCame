@@ -7,10 +7,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.hye.common.design.base.BaseScreenTemplate
 import com.hye.common.design.base.BaseViewModel
-import com.hye.common.design.mock.DayOfWeek
-import com.hye.common.design.mock.WorkSchedule
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.card.AppCard
+import com.hye.domain.model.DayOfWeek
+import com.hye.domain.model.WorkSchedule
 import com.hye.features.schedule.presentation.ui.component.ScheduleCardTitle
 import com.hye.features.schedule.presentation.ui.component.WeekDaySelector
 import com.hye.features.schedule.presentation.ui.component.WorkTimeField

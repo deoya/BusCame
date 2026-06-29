@@ -33,6 +33,7 @@ kotlin {
 dependencies {
     implementation(project(":common"))
     implementation(project(":common:design"))
+    implementation(project(":domain"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.android.core)
