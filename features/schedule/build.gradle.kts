@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.ksp)
+    alias(libs.plugins.hilt.gradle)
 }
 
 android {
@@ -35,6 +37,9 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.android.core)
     implementation(libs.bundles.compose)
+
+    implementation(libs.bundles.hilt)
+    ksp(libs.hilt.compiler)
 
     implementation(libs.timber)
 }

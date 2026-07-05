@@ -22,8 +22,7 @@ coroutines = "1.11.0"
 # 5. Dependency Injection (Hilt)
 javaxInject = "1"
 hilt = "2.59.2"
-appcompat = "1.6.1"
-material = "1.10.0"
+hiltNavigationCompose = "1.4.0"
 # 6. log
 timber = "5.0.1"
 # 7. DataStore
@@ -66,8 +65,7 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 # 6. Logging
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
@@ -113,10 +111,12 @@ compose = [
 
 hilt = [
     "hilt-android",
+    "hilt-navigation-compose"
 ]
 
 test = [
     "junit",
+    "androidx-junit",
     "kotlinx-coroutines-test",
     "mockk",
     "turbine"
