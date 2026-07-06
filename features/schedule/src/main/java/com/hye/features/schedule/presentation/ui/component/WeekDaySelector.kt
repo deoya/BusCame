@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.text.LabelText
 import com.hye.common.design.ui.text.TextStyleSize
+import com.hye.common.extension.label
 import com.hye.domain.model.schedule.DayOfWeek
 
 @Composable
