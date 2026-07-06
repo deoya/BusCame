@@ -9,7 +9,7 @@ lifecycleRuntimeKtx = "2.9.4"
 # 2. Compose Core & UI
 activityCompose = "1.13.0"
 composeBom = "2026.06.00"
-jetbrainsKotlinJvm = "2.3.0"
+jetbrainsKotlinJvm = "2.4.0"
 materialIconsExtended = "1.7.8"
 # 3. Tests
 junit = "4.13.2"
@@ -21,8 +21,8 @@ turbine = "1.2.0"
 coroutines = "1.11.0"
 # 5. Dependency Injection (Hilt)
 javaxInject = "1"
-hilt = "2.59.2"
-hiltNavigationCompose = "1.4.0"
+hilt = "2.60"
+hiltNavigationCompose = "1.2.0"
 # 6. log
 timber = "5.0.1"
 # 7. DataStore

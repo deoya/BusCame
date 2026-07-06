@@ -10,16 +10,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hye.common.design.base.BaseScreenTemplate
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.card.AppCard
 import com.hye.domain.model.DayOfWeek
 import com.hye.domain.model.TimePickerType
 import com.hye.features.schedule.presentation.ui.component.ScheduleCardTitle
-import com.hye.features.schedule.presentation.ui.component.TimePicker
 import com.hye.features.schedule.presentation.ui.component.WeekDaySelector
 import com.hye.features.schedule.presentation.ui.component.WorkTimeField
+import com.hye.features.schedule.presentation.ui.component.WorkTimePicker
 import com.hye.features.schedule.presentation.viewmodel.ScheduleEffect
 import com.hye.features.schedule.presentation.viewmodel.ScheduleIntent
 import com.hye.features.schedule.presentation.viewmodel.ScheduleViewModel
@@ -82,7 +82,7 @@ fun ScheduleScreen(
                 val initialMinute =
                     if (isCommute) state.schedule.commuteMinute else state.schedule.offworkMinute
 
-                TimePicker(
+                WorkTimePicker(
                     initialHour = initialHour,
                     initialMinute = initialMinute,
                     onConfirm = { hour, minute ->
