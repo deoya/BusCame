@@ -14,8 +14,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.hye.common.design.base.BaseScreenTemplate
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.card.AppCard
-import com.hye.domain.model.DayOfWeek
-import com.hye.domain.model.TimePickerType
+import com.hye.domain.model.schedule.DayOfWeek
+import com.hye.domain.model.schedule.TimePickerType
 import com.hye.features.schedule.presentation.ui.component.ScheduleCardTitle
 import com.hye.features.schedule.presentation.ui.component.WeekDaySelector
 import com.hye.features.schedule.presentation.ui.component.WorkTimeField

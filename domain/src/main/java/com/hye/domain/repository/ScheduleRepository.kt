@@ -1,6 +1,6 @@
 package com.hye.domain.repository
 
-import com.hye.domain.model.WorkSchedule
+import com.hye.domain.model.schedule.WorkSchedule
 import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {

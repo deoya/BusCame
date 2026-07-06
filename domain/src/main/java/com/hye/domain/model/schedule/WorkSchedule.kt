@@ -1,4 +1,4 @@
-package com.hye.domain.model
+package com.hye.domain.model.schedule
 
 data class WorkSchedule(
     val activeDays: Set<DayOfWeek> = setOf(

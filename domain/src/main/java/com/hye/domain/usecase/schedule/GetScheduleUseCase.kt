@@ -1,6 +1,6 @@
 package com.hye.domain.usecase.schedule
 
-import com.hye.domain.model.WorkSchedule
+import com.hye.domain.model.schedule.WorkSchedule
 import com.hye.domain.repository.ScheduleRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
