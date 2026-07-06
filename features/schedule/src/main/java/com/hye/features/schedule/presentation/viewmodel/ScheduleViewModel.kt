@@ -3,16 +3,24 @@ package com.hye.features.schedule.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.hye.common.design.base.BaseViewModel
 import com.hye.domain.model.DayOfWeek
+import com.hye.domain.usecase.schedule.ScheduleUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ScheduleViewModel : BaseViewModel() {
+
+@HiltViewModel
+class ScheduleViewModel @Inject constructor(
+    private val scheduleUseCase: ScheduleUseCase
+) : BaseViewModel() {
 
     private val _state = MutableStateFlow(ScheduleState())
     val state: StateFlow<ScheduleState> = _state.asStateFlow()
@@ -20,14 +28,33 @@ class ScheduleViewModel : BaseViewModel() {
     private val _effect = MutableSharedFlow<ScheduleEffect>()
     val effect: SharedFlow<ScheduleEffect> = _effect.asSharedFlow()
 
+    init {
+        loadSavedSchedule()
+    }
+
     fun processIntent(intent: ScheduleIntent) {
         when (intent) {
             is ScheduleIntent.ToggleDay -> toggleDay(intent.day)
-            ScheduleIntent.ClickCommuteTime -> sendEffect(ScheduleEffect.ShowCommuteTimePicker)
-            ScheduleIntent.ClickOffworkTime -> sendEffect(ScheduleEffect.ShowOffworkTimePicker)
+            is ScheduleIntent.ClickCommuteTime -> sendEffect(ScheduleEffect.ShowCommuteTimePicker)
+            is ScheduleIntent.ClickOffworkTime -> sendEffect(ScheduleEffect.ShowOffworkTimePicker)
             is ScheduleIntent.UpdateCommuteTime -> updateCommuteTime(intent.hour, intent.minute)
             is ScheduleIntent.UpdateOffworkTime -> updateOffworkTime(intent.hour, intent.minute)
-            ScheduleIntent.SaveSchedule -> saveSchedule()
+            is ScheduleIntent.SaveSchedule -> saveSchedule()
+        }
+    }
+
+    private fun loadSavedSchedule() {
+        viewModelScope.launch(commonCeh) {
+            _state.update { it.copy(isLoading = true) }
+
+            scheduleUseCase.getScheduleUseCase()
+                .catch { throwable ->
+                    _state.update { it.copy(isLoading = false) }
+                    throw throwable
+                }
+                .collect { savedSchedule ->
+                    _state.update { it.copy(schedule = savedSchedule, isLoading = false) }
+                }
         }
     }
 
@@ -55,11 +82,11 @@ class ScheduleViewModel : BaseViewModel() {
         viewModelScope.launch(commonCeh) {
             _state.update { it.copy(isLoading = true) }
 
-            // TODO: DataStore에 저장하는 로직 (나중에 여기에 구현)
+            scheduleUseCase.saveScheduleUseCase(_state.value.schedule)
 
             _state.update { it.copy(isLoading = false) }
 
-            showToast("근무 일정이 저장되었습니다.")
+            showToast("기기에 근무 일정이 안전하게 저장되었습니다.")
         }
     }
 

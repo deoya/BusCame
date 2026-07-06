@@ -1,14 +1,14 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.ksp)
+    alias(libs.plugins.hilt.gradle)
 }
 
 android {
     namespace = "com.hye.buscame"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.hye.buscame"
@@ -43,6 +43,8 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":data"))
+    implementation(project(":domain"))
     implementation(project(":common"))
     implementation(project(":common:design"))
     implementation(project(":features:schedule"))
@@ -51,6 +53,10 @@ dependencies {
     implementation(libs.bundles.android.core)
     implementation(libs.bundles.compose)
 
+    implementation(libs.bundles.hilt)
+    ksp(libs.hilt.compiler)
+
+    implementation(libs.timber)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
