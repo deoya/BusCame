@@ -1,6 +1,6 @@
 package com.hye.features.schedule.presentation.viewmodel
 
-import com.hye.domain.model.DayOfWeek
+import com.hye.domain.model.schedule.DayOfWeek
 
 
 sealed class ScheduleIntent {

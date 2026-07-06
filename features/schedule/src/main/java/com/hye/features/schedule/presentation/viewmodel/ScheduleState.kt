@@ -1,6 +1,6 @@
 package com.hye.features.schedule.presentation.viewmodel
 
-import com.hye.domain.model.WorkSchedule
+import com.hye.domain.model.schedule.WorkSchedule
 
 
 data class ScheduleState(

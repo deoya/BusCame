@@ -2,7 +2,7 @@ package com.hye.features.schedule.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.hye.common.design.base.BaseViewModel
-import com.hye.domain.model.DayOfWeek
+import com.hye.domain.model.schedule.DayOfWeek
 import com.hye.domain.usecase.schedule.ScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

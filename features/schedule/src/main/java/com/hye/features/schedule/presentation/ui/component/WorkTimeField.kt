@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.filed.GenericClickableField
-import com.hye.domain.model.WorkSchedule
+import com.hye.domain.model.schedule.WorkSchedule
 
 @Composable
 fun WorkTimeField(
