@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hye.common.design.theme.DesignTheme
@@ -25,6 +26,16 @@ import com.hye.common.design.ui.text.TitleText
 
 private object GenericFieldTokens {
     val DefaultIconSize = 13.dp
+}
+
+@Preview
+@Composable
+fun GenericClickableField_preview() {
+    GenericClickableField(
+        label = "Label",
+        value = "Value",
+        onClick = {}
+    )
 }
 
 @Composable
