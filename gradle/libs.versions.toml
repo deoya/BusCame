@@ -29,7 +29,8 @@ timber = "5.0.1"
 datastore = "1.2.1"
 # 8. Room
 room = "2.8.4"
-
+# 9. secrets plugin
+secrets = "2.0.1"
 
 
 [libraries]
@@ -92,6 +93,8 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref =
 # Plugins for Dependency Injection
 hilt-gradle = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+# secrets plugin
+secrets-gradle = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 
 [bundles]
 android-core = [
