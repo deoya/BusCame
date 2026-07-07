@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.ksp)
     alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.secrets.gradle)
 }
 
 android {
