@@ -37,7 +37,11 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+}
+secrets {
+    propertiesFileName = "local.properties"
 }
 kotlin {
     jvmToolchain(21)
@@ -49,6 +53,7 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":common:design"))
     implementation(project(":features:schedule"))
+    implementation(project(":features:route"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.android.core)
@@ -63,4 +68,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+
+    implementation(libs.kakao.map)
 }
