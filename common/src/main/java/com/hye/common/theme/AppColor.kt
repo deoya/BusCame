@@ -9,11 +9,13 @@ data class CategoryColor(
 )
 
 data class FeatureColors(
-    val categoryColors: CategoryColor
+    val categoryColors: CategoryColor,
+    val markerFinColor: Color,
 )
 
 val LightFeatureColors = FeatureColors(
     categoryColors = CategoryColor(main = Color(0xFF488AFF), container = Color(0xFFD9E4FF)),
+    markerFinColor = Color(0xFFFF5A4C),
 )
 
 // Feature 전용 LocalProvider

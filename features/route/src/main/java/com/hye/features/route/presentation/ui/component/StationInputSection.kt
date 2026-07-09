@@ -12,16 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.text.LabeledSelectorField
-import com.hye.domain.model.map.CommuteRoute
+import com.hye.features.route.presentation.viewmodel.RouteState
 
 @Composable
 fun StationInputSection(
-    route: CommuteRoute,
+    route: RouteState,
     onDepartureStopClick: () -> Unit,
-    onArrivalStopClick: () -> Unit
+    onArrivalStopClick: () -> Unit,
 ) {
-    val noneBus = ""
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -29,7 +27,7 @@ fun StationInputSection(
     ) {
         LabeledSelectorField(
             label = "출발 정거장",
-            value = route.departureStop?.name ?: noneBus,
+            value = route.departureStop?.name ?: "출발 정류장 선택",
             modifier = Modifier.weight(1f),
             onClick = onDepartureStopClick
         )
@@ -41,7 +39,7 @@ fun StationInputSection(
         )
         LabeledSelectorField(
             label = "도착 정거장",
-            value = route.destinationStop?.name ?: noneBus,
+            value = route.arrivalStop?.name ?: "도착 정류장 선택",
             modifier = Modifier.weight(1f),
             onClick = onArrivalStopClick
         )

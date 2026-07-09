@@ -1,4 +1,4 @@
-package com.hye.domain.model.map
+package com.hye.domain.model.route
 
 data class BusStop(
     val nodeId: String,      // 정류장 고유 노드 ID (실제 API 통신 시 필수)
