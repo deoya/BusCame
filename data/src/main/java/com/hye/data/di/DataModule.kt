@@ -5,7 +5,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.hye.data.repository.BusRepositoryImpl
 import com.hye.data.repository.ScheduleRepositoryImpl
+import com.hye.domain.repository.BusRepository
 import com.hye.domain.repository.ScheduleRepository
 import dagger.Binds
 import dagger.Module
@@ -35,4 +37,10 @@ abstract class DataModule {
     abstract fun bindScheduleRepository(
         scheduleRepositoryImpl: ScheduleRepositoryImpl
     ): ScheduleRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBusRepository(
+        busRepositoryImpl: BusRepositoryImpl
+    ): BusRepository
 }
