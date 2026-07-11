@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.ksp)
     alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.secrets.gradle)
 }
 
 android {
@@ -19,9 +20,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+    buildFeatures {
+        buildConfig = true
+    }
 
 }
-
+secrets {
+    propertiesFileName = "./local.properties"
+}
 kotlin {
     jvmToolchain(21)
 }
@@ -37,4 +43,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.timber)
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.bundles.network)
+    compileOnly(libs.error.prone.annotations)
 }

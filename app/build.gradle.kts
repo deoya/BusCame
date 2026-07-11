@@ -70,4 +70,7 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 
     implementation(libs.kakao.map)
+
+    implementation(libs.bundles.network)
+    compileOnly(libs.error.prone.annotations)
 }

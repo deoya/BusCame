@@ -5,8 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
-import com.hye.domain.model.DayOfWeek
-import com.hye.domain.model.WorkSchedule
+import com.hye.domain.model.schedule.DayOfWeek
+import com.hye.domain.model.schedule.WorkSchedule
 import com.hye.domain.repository.ScheduleRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
