@@ -1,7 +1,7 @@
 package com.hye.data.repository
 
-import com.hye.data.di.BusSttnInfoApiKey
 import com.hye.data.di.IoDispatcher
+import com.hye.data.di.qualifier.BusSttnInfoApiKey
 import com.hye.data.remote.api.TagoBusApi
 import com.hye.domain.model.common.ResultWrapper
 import com.hye.domain.model.route.BusStop

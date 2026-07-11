@@ -1,6 +1,5 @@
 package com.hye.data.remote.dto.nearby
 
-import com.hye.data.remote.dto.NearbySttnItems
 import kotlinx.serialization.Serializable
 
 

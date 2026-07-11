@@ -1,7 +1,7 @@
 package com.hye.buscame
 
 import android.app.Application
-import com.hye.data.di.KakaoNativeAppKey
+import com.hye.data.di.qualifier.KakaoNativeAppKey
 import com.kakao.vectormap.KakaoMapSdk
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber

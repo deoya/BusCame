@@ -1,4 +1,4 @@
-package com.hye.data.di
+package com.hye.data.di.qualifier
 
 import com.hye.data.BuildConfig
 import dagger.Module
