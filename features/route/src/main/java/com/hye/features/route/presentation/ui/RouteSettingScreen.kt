@@ -2,6 +2,7 @@ package com.hye.features.route.presentation.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -17,8 +18,10 @@ import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.card.AppCard
 import com.hye.common.design.ui.text.TextStyleSize
 import com.hye.common.design.ui.text.TitleText
+import com.hye.domain.model.common.UiStateResult
 import com.hye.domain.model.route.SelectionMode
 import com.hye.features.route.presentation.ui.component.MapSection
+import com.hye.features.route.presentation.ui.component.PlaceSearchSection
 import com.hye.features.route.presentation.ui.component.StationInputSection
 import com.hye.features.route.presentation.viewmodel.RouteIntent
 import com.hye.features.route.presentation.viewmodel.RouteViewModel
@@ -29,7 +32,6 @@ fun RouteSettingScreen(
     viewModel: RouteViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     BaseScreenTemplate(
@@ -69,15 +71,37 @@ fun RouteSettingScreen(
                 sheetState = sheetState,
                 containerColor = DesignTheme.colors.surface
             ) {
-                Box(modifier = Modifier.fillMaxHeight(0.9f)) {
-                    MapSection(
-                        selectionMode = state.selectionMode,
-                        onMapCenterChanged = { lat, lng ->
-                            viewModel.processIntent(RouteIntent.MapCenterChanged(lat, lng))
+
+                val nearbyStops = when (val stopsState = state.nearbyStopsState) {
+                    is UiStateResult.Success -> stopsState.data
+                    else -> emptyList() // 로딩 중이거나 에러일 땐 빈 리스트(핀 없음)
+                }
+                Column(
+                    modifier = Modifier.fillMaxHeight(0.9f)
+                ) {
+
+                    Box(modifier = Modifier.weight(1f)) {
+                        MapSection(
+                            selectionMode = state.selectionMode,
+                            currentMapCenter = state.currentMapCenter,
+                            nearbyStops = nearbyStops,
+                            onMapCenterChanged = { lat, lng ->
+                                viewModel.processIntent(RouteIntent.MapCenterChanged(lat, lng))
+                            },
+                            onConfirmSelection = {
+                                viewModel.processIntent(RouteIntent.ConfirmSelection)
+                            }
+                        )
+                    }
+                    PlaceSearchSection(
+                        searchQuery = state.searchQuery,
+                        onUpdateSearchQuery = { query ->
+                            viewModel.processIntent(RouteIntent.UpdateSearchQuery(query))
                         },
-                        onConfirmSelection = {
-                            viewModel.processIntent(RouteIntent.ConfirmSelection)
-                        }
+                        onPlaceSelected = { place ->
+                            viewModel.processIntent(RouteIntent.SelectPlace(place))
+                        },
+                        searchResults = state.searchResults
                     )
                 }
             }

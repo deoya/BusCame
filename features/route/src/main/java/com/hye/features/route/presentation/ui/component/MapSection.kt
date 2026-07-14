@@ -13,12 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.PersonPinCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,22 +29,58 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.theme.AppTheme
+import com.hye.domain.model.route.BusStop
 import com.hye.domain.model.route.SelectionMode
+import com.hye.features.route.R
 import com.kakao.vectormap.KakaoMap
-import timber.log.Timber
+import com.kakao.vectormap.LatLng
+import com.kakao.vectormap.camera.CameraUpdateFactory
+import com.kakao.vectormap.label.LabelOptions
+import com.kakao.vectormap.label.LabelStyle
+import com.kakao.vectormap.label.LabelStyles
 
 @Composable
 fun MapSection(
     selectionMode: SelectionMode,
+    currentMapCenter: Pair<Double, Double>?,
+    nearbyStops: List<BusStop>,
     onMapCenterChanged: (Double, Double) -> Unit,
     onConfirmSelection: () -> Unit
 ) {
     var kakaoMapInstance by remember { mutableStateOf<KakaoMap?>(null) }
+
+    LaunchedEffect(kakaoMapInstance, currentMapCenter) {
+        val map = kakaoMapInstance ?: return@LaunchedEffect
+        val center = currentMapCenter ?: return@LaunchedEffect
+
+        val targetLatLng = LatLng.from(center.first, center.second)
+        map.moveCamera(CameraUpdateFactory.newCenterPosition(targetLatLng))
+    }
+
+    LaunchedEffect(kakaoMapInstance, nearbyStops) {
+        val map = kakaoMapInstance ?: return@LaunchedEffect
+        val layer = map.labelManager?.layer ?: return@LaunchedEffect
+        layer.removeAll()
+
+        val style = map.labelManager?.addLabelStyles(
+            LabelStyles.from(
+                LabelStyle.from(
+                    R.drawable.location_on
+                )
+            )
+        )
+
+        nearbyStops.forEach { stop ->
+            val options = LabelOptions.from(stop.nodeId, LatLng.from(stop.latitude, stop.longitude))
+                .setStyles(style)
+                .setClickable(true)
+            layer.addLabel(options)
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.7f)
-            //.height(AppTheme.dimens.mapPlaceholderHeight)
             .background(
                 color = DesignTheme.colors.surfaceVariant,
                 shape = RoundedCornerShape(DesignTheme.dimens.radiusMd)
@@ -55,7 +92,6 @@ fun MapSection(
             ),
         contentAlignment = Alignment.Center
     ) {
-        Timber.d("카카오 맵 시작!")
         AppKakaoMap(
             onMapReady = { map ->
                 kakaoMapInstance = map
@@ -71,7 +107,7 @@ fun MapSection(
             }
         )
         Icon(
-            imageVector = Icons.Default.LocationOn,
+            imageVector = Icons.Outlined.PersonPinCircle,
             contentDescription = "선택 핀",
             tint = AppTheme.color.markerFinColor,
             modifier = Modifier
@@ -86,7 +122,7 @@ fun MapSection(
             exit = fadeOut(),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp)
+                .padding(bottom = DesignTheme.dimens.spaceMd)
         ) {
             val buttonText =
                 if (selectionMode == SelectionMode.DEPARTURE) "여기를 출발지로 설정" else "여기를 도착지로 설정"

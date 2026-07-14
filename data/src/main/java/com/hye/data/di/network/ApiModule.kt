@@ -1,9 +1,9 @@
 package com.hye.data.di.network
 
-import com.hye.data.di.qualifier.BusSttnInfoApiKey
-import com.hye.data.di.qualifier.KakaoNativeAppKey
 import com.hye.data.di.qualifier.KakaoRetrofit
 import com.hye.data.di.qualifier.TagoRetrofit
+import com.hye.data.remote.api.KakaoLocalApi
+import com.hye.data.remote.api.TagoBusApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,17 +15,18 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 
-    @Provides
-    @Singleton
-    fun provideNearbyStationApi(
-        @TagoRetrofit retrofit: Retrofit
-    ): KakaoNativeAppKey =
-        retrofit.create(KakaoNativeAppKey::class.java)
 
     @Provides
     @Singleton
     fun provideKakaoLocalApi(
         @KakaoRetrofit retrofit: Retrofit
-    ): BusSttnInfoApiKey =
-        retrofit.create(BusSttnInfoApiKey::class.java)
+    ): KakaoLocalApi =
+        retrofit.create(KakaoLocalApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideTagoBusApi(
+        @TagoRetrofit retrofit: Retrofit
+    ): TagoBusApi =
+        retrofit.create(TagoBusApi::class.java)
 }

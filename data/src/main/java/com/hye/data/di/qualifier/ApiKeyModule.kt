@@ -13,6 +13,10 @@ annotation class KakaoNativeAppKey
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
+annotation class KakaoRestApiKey
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
 annotation class BusSttnInfoApiKey
 
 @Module
@@ -22,6 +26,10 @@ object ApiKeyModule {
     @Provides
     @KakaoNativeAppKey
     fun provideKakaoNativeAppKey(): String = BuildConfig.KAKAO_NATIVE_APP_KEY
+
+    @Provides
+    @KakaoRestApiKey
+    fun provideKakaoRestApiKey(): String = BuildConfig.KAKAO_REST_API_KEY
 
     @Provides
     @BusSttnInfoApiKey

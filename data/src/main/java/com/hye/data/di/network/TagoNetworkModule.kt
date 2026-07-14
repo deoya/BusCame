@@ -1,6 +1,7 @@
 package com.hye.data.di.network
 
 import com.hye.data.BuildConfig
+import com.hye.data.di.qualifier.TagoOkHttp
 import com.hye.data.di.qualifier.TagoRetrofit
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -18,7 +19,6 @@ import javax.inject.Singleton
 
 /*
 * BASE_URL,Logger, Timeout 관리
-*
 * */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -27,6 +27,7 @@ object TagoNetworkModule {
 
     @Provides
     @Singleton
+    @TagoOkHttp
     fun provideTagoOkHttpClient(): OkHttpClient {
 
         val logger = HttpLoggingInterceptor {
@@ -51,7 +52,7 @@ object TagoNetworkModule {
     @Singleton
     @TagoRetrofit
     fun provideTagoRetrofit(
-        okHttpClient: OkHttpClient,
+        @TagoOkHttp okHttpClient: OkHttpClient,
         json: Json
     ): Retrofit {
 

@@ -1,7 +1,8 @@
 package com.hye.data.di.network
 
 import com.hye.data.BuildConfig
-import com.hye.data.di.qualifier.KakaoNativeAppKey
+import com.hye.data.di.qualifier.KakaoOkHttp
+import com.hye.data.di.qualifier.KakaoRestApiKey
 import com.hye.data.di.qualifier.KakaoRetrofit
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -22,8 +23,9 @@ object KakaoNetworkModule {
 
     @Provides
     @Singleton
+    @KakaoOkHttp
     fun provideKakaoOkHttpClient(
-        @KakaoNativeAppKey apiKey: String
+        @KakaoRestApiKey apiKey: String
     ): OkHttpClient {
 
         val logger = HttpLoggingInterceptor {
@@ -57,7 +59,7 @@ object KakaoNetworkModule {
     @Singleton
     @KakaoRetrofit
     fun provideKakaoRetrofit(
-        okHttpClient: OkHttpClient,
+        @KakaoOkHttp okHttpClient: OkHttpClient,
         json: Json
     ): Retrofit {
 
