@@ -23,7 +23,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object TagoNetworkModule {
-    private const val BASE_URL = "http://apis.data.go.kr/"
+    private const val BASE_URL = "https://apis.data.go.kr/"
 
     @Provides
     @Singleton
