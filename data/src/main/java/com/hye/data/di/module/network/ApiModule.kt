@@ -1,8 +1,10 @@
-package com.hye.data.di.network
+package com.hye.data.di.module.network
 
 import com.hye.data.di.qualifier.KakaoRetrofit
+import com.hye.data.di.qualifier.SeoulRetrofit
 import com.hye.data.di.qualifier.TagoRetrofit
 import com.hye.data.remote.api.KakaoLocalApi
+import com.hye.data.remote.api.SeoulBusApi
 import com.hye.data.remote.api.TagoBusApi
 import dagger.Module
 import dagger.Provides
@@ -29,4 +31,12 @@ object ApiModule {
         @TagoRetrofit retrofit: Retrofit
     ): TagoBusApi =
         retrofit.create(TagoBusApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideSeoulBusApi(
+        @SeoulRetrofit retrofit: Retrofit
+    ): SeoulBusApi =
+        retrofit.create(SeoulBusApi::class.java)
+
 }

@@ -1,8 +1,8 @@
-package com.hye.data.di.network
+package com.hye.data.di.module.network
 
 import com.hye.data.BuildConfig
-import com.hye.data.di.qualifier.TagoOkHttp
-import com.hye.data.di.qualifier.TagoRetrofit
+import com.hye.data.di.qualifier.SeoulOkHttp
+import com.hye.data.di.qualifier.SeoulRetrofit
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -17,53 +17,38 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
-/*
-* BASE_URL,Logger, Timeout 관리
-* */
 @Module
 @InstallIn(SingletonComponent::class)
-object TagoNetworkModule {
-    private const val BASE_URL = "https://apis.data.go.kr/"
+object SeoulNetworkModule {
 
     @Provides
     @Singleton
-    @TagoOkHttp
-    fun provideTagoOkHttpClient(): OkHttpClient {
-
-        val logger = HttpLoggingInterceptor {
-            Timber.tag("OkHttp").d(it)
-        }.apply {
-            level =
-                if (BuildConfig.DEBUG)
-                    HttpLoggingInterceptor.Level.BODY
-                else
-                    HttpLoggingInterceptor.Level.NONE
-        }
+    @SeoulOkHttp
+    fun provideSeoulOkHttpClient(): OkHttpClient {
+        val logger = HttpLoggingInterceptor { message -> Timber.tag("SeoulApi").d(message) }
+            .apply {
+                level =
+                    if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+            }
 
         return OkHttpClient.Builder()
             .addInterceptor(logger)
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
             .build()
     }
 
     @Provides
     @Singleton
-    @TagoRetrofit
-    fun provideTagoRetrofit(
-        @TagoOkHttp okHttpClient: OkHttpClient,
+    @SeoulRetrofit
+    fun provideSeoulRetrofit(
+        @SeoulOkHttp okHttpClient: OkHttpClient,
         json: Json
     ): Retrofit {
-
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl("http://ws.bus.go.kr/")
             .client(okHttpClient)
-            .addConverterFactory(
-                json.asConverterFactory(
-                    "application/json".toMediaType()
-                )
-            )
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
     }
 }

@@ -1,4 +1,4 @@
-package com.hye.data.di.network
+package com.hye.data.di.module.network
 
 import com.hye.data.BuildConfig
 import com.hye.data.di.qualifier.KakaoOkHttp

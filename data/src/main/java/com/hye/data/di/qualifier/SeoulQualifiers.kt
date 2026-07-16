@@ -4,4 +4,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class TagoRetrofit
+annotation class SeoulOkHttp
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class SeoulRetrofit

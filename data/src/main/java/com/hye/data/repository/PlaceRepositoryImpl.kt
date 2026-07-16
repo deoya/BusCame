@@ -1,6 +1,6 @@
 package com.hye.data.repository
 
-import com.hye.data.di.IoDispatcher
+import com.hye.data.di.qualifier.IoDispatcher
 import com.hye.data.remote.api.KakaoLocalApi
 import com.hye.domain.model.common.ResultWrapper
 import com.hye.domain.model.route.Place

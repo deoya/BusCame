@@ -1,23 +1,14 @@
-package com.hye.data.di.qualifier
+package com.hye.data.di.module
 
 import com.hye.data.BuildConfig
+import com.hye.data.di.qualifier.KakaoNativeAppKey
+import com.hye.data.di.qualifier.KakaoRestApiKey
+import com.hye.data.di.qualifier.SeoulBusApiKey
+import com.hye.data.di.qualifier.TagoBusSttnApiKey
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Qualifier
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class KakaoNativeAppKey
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class KakaoRestApiKey
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class BusSttnInfoApiKey
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -32,6 +23,10 @@ object ApiKeyModule {
     fun provideKakaoRestApiKey(): String = BuildConfig.KAKAO_REST_API_KEY
 
     @Provides
-    @BusSttnInfoApiKey
-    fun provideBusSttnInfoApiKey(): String = BuildConfig.BUS_STTN_INFO_API_KEY
+    @TagoBusSttnApiKey
+    fun provideTagoBusSttnApiKey(): String = BuildConfig.BUS_STTN_INFO_API_KEY
+
+    @Provides
+    @SeoulBusApiKey
+    fun provideSeoulBusApiKey(): String = BuildConfig.SEOUL_BUS_API_KEY
 }

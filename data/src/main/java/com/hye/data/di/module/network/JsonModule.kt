@@ -1,4 +1,4 @@
-package com.hye.data.di.network
+package com.hye.data.di.module.network
 
 import dagger.Module
 import dagger.Provides
