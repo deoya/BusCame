@@ -33,7 +33,7 @@ room = "2.8.4"
 # 9. secrets plugin
 secrets = "2.0.1"
 # 10. map
-kakaoMap = "2.9.5"
+kakaoMap = "2.12.8"
 # 11. network
 retrofit = "2.9.0"
 okhttp = "4.11.0"
