@@ -1,4 +1,4 @@
-package com.hye.domain.model.map
+package com.hye.domain.model.route
 
 data class CommuteRoute(
     val departureStop: BusStop? = null,    // 타야 할 출발 정거장
