@@ -4,11 +4,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,7 +27,9 @@ import com.hye.common.design.ui.card.AppCard
 import com.hye.common.design.ui.text.TextStyleSize
 import com.hye.common.design.ui.text.TitleText
 import com.hye.domain.model.common.UiStateResult
+import com.hye.domain.model.route.BusStop
 import com.hye.domain.model.route.SelectionMode
+import com.hye.features.route.presentation.ui.component.FullScreenOverlay
 import com.hye.features.route.presentation.ui.component.MapSection
 import com.hye.features.route.presentation.ui.component.PlaceSearchSection
 import com.hye.features.route.presentation.ui.component.StationInputSection
@@ -32,7 +42,14 @@ fun RouteSettingScreen(
     viewModel: RouteViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var displayStops by remember { mutableStateOf<List<BusStop>>(emptyList()) }
+    var showSelectionDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.nearbyStopsState) {
+        if (state.nearbyStopsState is UiStateResult.Success) {
+            displayStops = (state.nearbyStopsState as UiStateResult.Success).data
+        }
+    }
 
     BaseScreenTemplate(
         viewModel = viewModel,
@@ -63,49 +80,91 @@ fun RouteSettingScreen(
             )
         }
 
-        if (state.selectionMode != SelectionMode.NONE) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    viewModel.processIntent(RouteIntent.CloseMapBottomSheet)
-                },
-                sheetState = sheetState,
-                containerColor = DesignTheme.colors.surface
+        FullScreenOverlay(
+            visible = state.selectionMode != SelectionMode.NONE,
+            title = "정류장 위치 선택",
+            onDismissRequest = { viewModel.processIntent(RouteIntent.CancelSelection) }
+        ) {
+            Column(
+                modifier = Modifier.fillMaxHeight(0.9f)
             ) {
 
-                val nearbyStops = when (val stopsState = state.nearbyStopsState) {
-                    is UiStateResult.Success -> stopsState.data
-                    else -> emptyList() // 로딩 중이거나 에러일 땐 빈 리스트(핀 없음)
-                }
-                Column(
-                    modifier = Modifier.fillMaxHeight(0.9f)
-                ) {
-
-                    Box(modifier = Modifier.weight(1f)) {
-                        MapSection(
-                            selectionMode = state.selectionMode,
-                            currentMapCenter = state.currentMapCenter,
-                            nearbyStops = nearbyStops,
-                            onMapCenterChanged = { lat, lng ->
-                                viewModel.processIntent(RouteIntent.MapCenterChanged(lat, lng))
-                            },
-                            onConfirmSelection = {
-                                viewModel.processIntent(RouteIntent.ConfirmSelection)
-                            }
-                        )
-                    }
-                    PlaceSearchSection(
-                        searchQuery = state.searchQuery,
-                        onUpdateSearchQuery = { query ->
-                            viewModel.processIntent(RouteIntent.UpdateSearchQuery(query))
+                Box(modifier = Modifier.weight(1f)) {
+                    MapSection(
+                        selectionMode = state.selectionMode,
+                        currentMapCenter = state.currentMapCenter,
+                        selectedBusStop = state.selectedBusStop,
+                        nearbyStops = displayStops,
+                        onMapCenterChanged = { lat, lng ->
+                            viewModel.processIntent(RouteIntent.MapCenterChanged(lat, lng))
                         },
-                        onPlaceSelected = { place ->
-                            viewModel.processIntent(RouteIntent.SelectPlace(place))
+                        onConfirmSelection = {
+                            showSelectionDialog = true
                         },
-                        searchResults = state.searchResults
+                        onBusStopPinClick = { stop ->
+                            viewModel.processIntent(RouteIntent.ClickBusStopPin(stop))
+                        },
                     )
+                }
+                PlaceSearchSection(
+                    searchQuery = state.searchQuery,
+                    onUpdateSearchQuery = { query ->
+                        viewModel.processIntent(RouteIntent.UpdateSearchQuery(query))
+                    },
+                    onPlaceSelected = { place ->
+                        viewModel.processIntent(RouteIntent.SelectPlace(place))
+                    },
+                    searchResults = state.searchResults
+                )
+            }
+        }
+        if (showSelectionDialog && state.selectedBusStop != null) {
+            androidx.compose.ui.window.Dialog(
+                onDismissRequest = { showSelectionDialog = false }
+            ) {
+                AppCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = DesignTheme.dimens.spaceLg)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(DesignTheme.dimens.spaceLg),
+                        verticalArrangement = Arrangement.spacedBy(DesignTheme.dimens.spaceMd),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        TitleText(
+                            text = state.selectedBusStop?.name ?: "",
+                            style = TextStyleSize.Medium
+                        )
+
+                        val modeTargetText =
+                            if (state.selectionMode == SelectionMode.DEPARTURE) "출발지" else "도착지"
+                        Text(
+                            text = "이 정류장을 $modeTargetText 로 최종 설정할까요?",
+                            color = DesignTheme.colors.onSurfaceVariant
+                        )
+
+                        Button(
+                            onClick = {
+                                showSelectionDialog = false // 창 닫기
+                                viewModel.processIntent(RouteIntent.ConfirmSelection)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = DesignTheme.colors.primary)
+                        ) {
+                            Text("확인", color = DesignTheme.colors.onPrimary)
+                        }
+
+                        androidx.compose.material3.TextButton(
+                            onClick = { showSelectionDialog = false }
+                        ) {
+                            Text("취소", color = DesignTheme.colors.border)
+                        }
+                    }
                 }
             }
         }
+
 
     }
 }

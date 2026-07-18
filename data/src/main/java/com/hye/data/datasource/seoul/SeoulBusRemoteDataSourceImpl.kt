@@ -11,6 +11,8 @@ class SeoulBusRemoteDataSourceImpl @Inject constructor(
     @SeoulBusApiKey private val apiKey: String
 ) : BusRemoteDataSource {
 
+    override val priority: Int = 100
+
     override fun canHandle(
         lat: Double,
         lng: Double

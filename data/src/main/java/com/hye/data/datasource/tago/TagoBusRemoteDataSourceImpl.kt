@@ -11,6 +11,8 @@ class TagoBusRemoteDataSourceImpl @Inject constructor(
     @TagoBusSttnApiKey private val apiKey: String
 ) : BusRemoteDataSource {
 
+    override val priority: Int = 0
+
     override fun canHandle(
         lat: Double,
         lng: Double

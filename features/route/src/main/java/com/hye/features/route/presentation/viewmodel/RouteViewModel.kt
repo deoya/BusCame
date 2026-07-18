@@ -1,5 +1,6 @@
 package com.hye.features.route.presentation.viewmodel
 
+import android.location.Location
 import androidx.lifecycle.viewModelScope
 import com.hye.common.design.base.BaseViewModel
 import com.hye.domain.model.common.ResultWrapper
@@ -23,7 +24,11 @@ class RouteViewModel @Inject constructor(
 ) : BaseViewModel() {
     private val _state = MutableStateFlow(RouteState())
     val state: StateFlow<RouteState> = _state.asStateFlow()
+
     private var searchJob: Job? = null
+
+    // 마지막으로 API를 호출했던 좌표
+    private var lastFetchedLocation: Pair<Double, Double>? = null
 
     fun processIntent(intent: RouteIntent) {
         when (intent) {
@@ -36,16 +41,47 @@ class RouteViewModel @Inject constructor(
             }
 
             is RouteIntent.MapCenterChanged -> {
-                _state.update { it.copy(currentMapCenter = Pair(intent.lat, intent.lng)) }
-                fetchNearbyStops(intent.lat, intent.lng)
+                _state.update {
+                    it.copy(
+                        currentMapCenter = Pair(
+                            intent.lat, intent.lng
+                        ),
+                        selectedBusStop = null
+                    )
+                }
+                searchJob?.cancel()
+                searchJob = viewModelScope.launch {
+                    delay(400)
+                    val shouldFetch = if (lastFetchedLocation != null) {
+                        val results = FloatArray(1)
+                        Location.distanceBetween(
+                            lastFetchedLocation!!.first, lastFetchedLocation!!.second,
+                            intent.lat, intent.lng,
+                            results
+                        )
+                        results[0] >= 200f // 200미터 이상 움직였을 때만 true
+                    } else {
+                        true // 처음 켰을 때는 무조건 검색
+                    }
+                    if (shouldFetch) {
+                        fetchNearbyStops(intent.lat, intent.lng)
+                    }
+                }
             }
 
             is RouteIntent.ConfirmSelection -> {
                 confirmCurrentSelection()
             }
 
-            is RouteIntent.CloseMapBottomSheet -> {
-                _state.update { it.copy(selectionMode = SelectionMode.NONE) }
+            is RouteIntent.CancelSelection -> {
+                _state.update {
+                    it.copy(
+                        selectionMode = SelectionMode.NONE, // 모달 닫기
+                        selectedBusStop = null,             // 핀 선택 초기화
+                        searchQuery = "",                   // 검색어 초기화 (선택사항)
+                        searchResults = UiStateResult.Idle // 검색 결과 초기화 (선택사항)
+                    )
+                }
             }
 
             is RouteIntent.UpdateSearchQuery -> {
@@ -62,6 +98,10 @@ class RouteViewModel @Inject constructor(
                     )
                 }
                 fetchNearbyStops(intent.place.latitude, intent.place.longitude)
+            }
+
+            is RouteIntent.ClickBusStopPin -> {
+                _state.update { it.copy(selectedBusStop = intent.stop) }
             }
         }
     }
@@ -101,17 +141,20 @@ class RouteViewModel @Inject constructor(
 
     private fun confirmCurrentSelection() {
         val currentState = _state.value
-        val center = currentState.currentMapCenter ?: return
         val mode = currentState.selectionMode
+        val selectedStop = currentState.selectedBusStop ?: return
 
         if (mode == SelectionMode.NONE) return
 
-        Timber.d("📍 [ViewModel] $mode 선택됨! 좌표: ${center.first}, ${center.second}")
-
-        // TODO: 여기서 실제 공공데이터 API를 호출하여 위경도를 BusStop 모델로 변환
-        _state.update {
-            it.copy(
-                selectionMode = SelectionMode.NONE
+        _state.update { state ->
+            val updatedState = when (mode) {
+                SelectionMode.DEPARTURE -> state.copy(departureStop = selectedStop)
+                SelectionMode.ARRIVAL -> state.copy(arrivalStop = selectedStop)
+                else -> state
+            }
+            updatedState.copy(
+                selectionMode = SelectionMode.NONE,
+                selectedBusStop = null
             )
         }
     }
@@ -122,10 +165,13 @@ class RouteViewModel @Inject constructor(
 
             when (val result = busStopsUseCase.getNearbyBusStopsUseCase(lat, lng)) {
                 is ResultWrapper.Success -> {
+                    Timber.d("🔍 [검색 성공] 데이터 개수: ${result.data.size}개")
+                    lastFetchedLocation = lat to lng
                     _state.update { it.copy(nearbyStopsState = UiStateResult.Success(result.data)) }
                 }
 
                 is ResultWrapper.Error -> {
+                    Timber.e(result.exception, "💥 [검색 실패] 원인을 확인하세요!")
                     _state.update { it.copy(nearbyStopsState = UiStateResult.Error(result.exception)) }
                 }
             }

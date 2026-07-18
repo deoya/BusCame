@@ -19,7 +19,14 @@ class BusRepositoryImpl @Inject constructor(
         return withContext(ioDispatcher) {
             runCatching {
 
-                val dataSource = dataSources.find { it.canHandle(lat, lng) }
+                val dataSource = dataSources
+                    .filter {
+                        it.canHandle(
+                            lat,
+                            lng
+                        )
+                    }
+                    .maxByOrNull { it.priority }  // 우선순위 우선으로 api 호출
                     ?: throw IllegalStateException("해당 지역을 처리할 수 있는 데이터 소스가 없습니다.")
 
                 dataSource.getNearbyStations(lat, lng).map { dto ->
