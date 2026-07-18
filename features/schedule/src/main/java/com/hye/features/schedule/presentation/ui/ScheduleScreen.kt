@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.hye.common.design.base.BaseScreenTemplate
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.card.AppCard
+import com.hye.domain.model.common.UiStateResult
 import com.hye.domain.model.schedule.DayOfWeek
 import com.hye.domain.model.schedule.TimePickerType
 import com.hye.features.schedule.presentation.ui.component.ScheduleCardTitle
@@ -49,7 +50,7 @@ fun ScheduleScreen(
     BaseScreenTemplate(
         screenName = "ScheduleScreen",
         viewModel = viewModel,
-        isLoading = state.isLoading,
+        isLoading = state.scheduleLoadState is UiStateResult.Loading || state.isSaving,
         errorMessage = null,
     ) {
         AppCard(verticalArrangement = Arrangement.spacedBy(DesignTheme.dimens.spaceSm)) {

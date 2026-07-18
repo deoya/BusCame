@@ -5,16 +5,21 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.hye.data.di.qualifier.IoDispatcher
+import com.hye.domain.model.common.ResultWrapper
 import com.hye.domain.model.schedule.DayOfWeek
 import com.hye.domain.model.schedule.WorkSchedule
 import com.hye.domain.repository.ScheduleRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
 class ScheduleRepositoryImpl @Inject constructor(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ScheduleRepository {
 
     private object Keys {
@@ -25,30 +30,51 @@ class ScheduleRepositoryImpl @Inject constructor(
         val OFFWORK_MINUTE = intPreferencesKey("offwork_minute")
     }
 
-    override fun getSchedule(): Flow<WorkSchedule> {
-        return dataStore.data.map { preferences ->
-            val savedDaysStr = preferences[Keys.ACTIVE_DAYS] ?: emptySet()
-            val activeDays = savedDaysStr.mapNotNull {
-                runCatching { DayOfWeek.valueOf(it) }.getOrNull()
-            }.toSet()
+    override suspend fun getSchedule(): ResultWrapper<WorkSchedule> {
+        return withContext(ioDispatcher) {
+            runCatching {
+                val preferences = dataStore.data.first()
 
-            WorkSchedule(
-                activeDays = activeDays,
-                commuteHour = preferences[Keys.COMMUTE_HOUR] ?: 9,
-                commuteMinute = preferences[Keys.COMMUTE_MINUTE] ?: 0,
-                offworkHour = preferences[Keys.OFFWORK_HOUR] ?: 18,
-                offworkMinute = preferences[Keys.OFFWORK_MINUTE] ?: 0
+                val savedDaysStr = preferences[Keys.ACTIVE_DAYS] ?: emptySet()
+                val activeDays = savedDaysStr.mapNotNull {
+                    runCatching { DayOfWeek.valueOf(it) }.getOrNull()
+                }.toSet()
+
+                WorkSchedule(
+                    activeDays = activeDays,
+                    commuteHour = preferences[Keys.COMMUTE_HOUR] ?: 9,
+                    commuteMinute = preferences[Keys.COMMUTE_MINUTE] ?: 0,
+                    offworkHour = preferences[Keys.OFFWORK_HOUR] ?: 18,
+                    offworkMinute = preferences[Keys.OFFWORK_MINUTE] ?: 0
+                )
+            }.fold(
+                onSuccess = { ResultWrapper.Success(it) },
+                onFailure = { error ->
+                    if (error is CancellationException) throw error
+                    ResultWrapper.Error(error)
+                }
             )
         }
     }
 
-    override suspend fun saveSchedule(schedule: WorkSchedule) {
-        dataStore.edit { preferences ->
-            preferences[Keys.ACTIVE_DAYS] = schedule.activeDays.map { it.name }.toSet()
-            preferences[Keys.COMMUTE_HOUR] = schedule.commuteHour
-            preferences[Keys.COMMUTE_MINUTE] = schedule.commuteMinute
-            preferences[Keys.OFFWORK_HOUR] = schedule.offworkHour
-            preferences[Keys.OFFWORK_MINUTE] = schedule.offworkMinute
+    override suspend fun saveSchedule(schedule: WorkSchedule): ResultWrapper<Unit> {
+        return withContext(ioDispatcher) {
+            runCatching {
+                dataStore.edit { preferences ->
+                    preferences[Keys.ACTIVE_DAYS] = schedule.activeDays.map { it.name }.toSet()
+                    preferences[Keys.COMMUTE_HOUR] = schedule.commuteHour
+                    preferences[Keys.COMMUTE_MINUTE] = schedule.commuteMinute
+                    preferences[Keys.OFFWORK_HOUR] = schedule.offworkHour
+                    preferences[Keys.OFFWORK_MINUTE] = schedule.offworkMinute
+                }
+                Unit
+            }.fold(
+                onSuccess = { ResultWrapper.Success(it) },
+                onFailure = { error ->
+                    if (error is CancellationException) throw error
+                    ResultWrapper.Error(error)
+                }
+            )
         }
     }
 }

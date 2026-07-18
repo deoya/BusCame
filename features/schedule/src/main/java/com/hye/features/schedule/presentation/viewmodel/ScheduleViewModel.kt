@@ -2,6 +2,8 @@ package com.hye.features.schedule.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.hye.common.design.base.BaseViewModel
+import com.hye.domain.model.common.ResultWrapper
+import com.hye.domain.model.common.UiStateResult
 import com.hye.domain.model.schedule.DayOfWeek
 import com.hye.domain.usecase.schedule.ScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,7 +13,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,16 +46,26 @@ class ScheduleViewModel @Inject constructor(
 
     private fun loadSavedSchedule() {
         viewModelScope.launch(commonCeh) {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(scheduleLoadState = UiStateResult.Loading) }
 
-            scheduleUseCase.getScheduleUseCase()
-                .catch { throwable ->
-                    _state.update { it.copy(isLoading = false) }
-                    throw throwable
+            when (val result = scheduleUseCase.getScheduleUseCase()) {
+                is ResultWrapper.Success -> {
+                    _state.update { currentState ->
+                        currentState.copy(
+                            schedule = result.data,
+                            scheduleLoadState = UiStateResult.Success(result.data)
+                        )
+                    }
                 }
-                .collect { savedSchedule ->
-                    _state.update { it.copy(schedule = savedSchedule, isLoading = false) }
+
+                is ResultWrapper.Error -> {
+                    _state.update { currentState ->
+                        currentState.copy(
+                            scheduleLoadState = UiStateResult.Error(result.exception)
+                        )
+                    }
                 }
+            }
         }
     }
 
@@ -80,11 +91,11 @@ class ScheduleViewModel @Inject constructor(
 
     private fun saveSchedule() {
         viewModelScope.launch(commonCeh) {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isSaving = true) }
 
             scheduleUseCase.saveScheduleUseCase(_state.value.schedule)
 
-            _state.update { it.copy(isLoading = false) }
+            _state.update { it.copy(isSaving = false) }
 
             showToast("기기에 근무 일정이 안전하게 저장되었습니다.")
         }
