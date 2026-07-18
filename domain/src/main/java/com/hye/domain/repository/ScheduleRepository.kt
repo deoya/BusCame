@@ -1,10 +1,10 @@
 package com.hye.domain.repository
 
+import com.hye.domain.model.common.ResultWrapper
 import com.hye.domain.model.schedule.WorkSchedule
-import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {
-    fun getSchedule(): Flow<WorkSchedule>
+    suspend fun getSchedule(): ResultWrapper<WorkSchedule>
 
-    suspend fun saveSchedule(schedule: WorkSchedule)
+    suspend fun saveSchedule(schedule: WorkSchedule): ResultWrapper<Unit>
 }
