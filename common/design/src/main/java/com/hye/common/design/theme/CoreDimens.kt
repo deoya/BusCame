@@ -15,11 +15,15 @@ import androidx.compose.ui.unit.sp
 
 data class CoreDimens(
     // 🟢 Spacing & Padding (여백 및 간격)
+    val spaceNone: Dp = 0.dp,
+    val spaceTiny: Dp = 3.dp,
     val spaceXxxs: Dp = 2.dp,
+    val spaceMicro: Dp = 6.dp,
     val spaceXxs: Dp = 4.dp,
     val spaceXs: Dp = 8.dp,
     val spaceS: Dp = 10.dp,
     val spaceSm: Dp = 12.dp,
+    val spaceSemiMd: Dp = 14.dp,
     val spaceMd: Dp = 16.dp,  // 표준 여백
     val spaceLg: Dp = 20.dp,
     val spaceXl: Dp = 24.dp,
@@ -37,8 +41,11 @@ data class CoreDimens(
     val iconXSmall: Dp = 12.dp,
     val iconSmall: Dp = 16.dp,
     val iconMediumSmall: Dp = 18.dp,
+    val iconMediumLarge: Dp = 22.dp,
     val iconMedium: Dp = 24.dp, // 일반적인 아이콘 크기
+    val iconXLarge: Dp = 28.dp,
     val iconLarge: Dp = 32.dp,
+    val iconExtraLarge: Dp = 60.dp,
     val thumbNormal: Dp = 64.dp, // 기존 thumbSize
 
     val buttonHeight: Dp = 50.dp, // 기존 bigBtn
@@ -52,6 +59,7 @@ data class CoreDimens(
     val textSizeM: TextUnit = 15.sp,
     val textSizeL: TextUnit = 18.sp,
     val textSizeXl: TextUnit = 20.sp,
+    val textSizeXxl: TextUnit = 30.sp,
 
     // 🟢 Elevation & Stroke (그림자 및 테두리 두께)
     val strokeThin: Dp = 1.dp,

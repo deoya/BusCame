@@ -11,11 +11,13 @@ data class CategoryColor(
 data class FeatureColors(
     val categoryColors: CategoryColor,
     val markerFinColor: Color,
+    val nextBusColor: Color
 )
 
 val LightFeatureColors = FeatureColors(
     categoryColors = CategoryColor(main = Color(0xFF488AFF), container = Color(0xFFD9E4FF)),
     markerFinColor = Color(0xFFFF5A4C),
+    nextBusColor = Color(0xFF8A8A8A)
 )
 
 // Feature 전용 LocalProvider
