@@ -12,13 +12,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.hye.common.design.theme.DesignTheme
 import com.hye.common.design.ui.text.LabeledSelectorField
+import com.hye.domain.model.route.SelectionMode
 import com.hye.features.route.presentation.viewmodel.RouteState
 
 @Composable
 fun StationInputSection(
     route: RouteState,
-    onDepartureStopClick: () -> Unit,
-    onArrivalStopClick: () -> Unit,
+    onClickStationInput: (SelectionMode) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -29,7 +29,7 @@ fun StationInputSection(
             label = "출발 정거장",
             value = route.departureStop?.name ?: "출발 정류장 선택",
             modifier = Modifier.weight(1f),
-            onClick = onDepartureStopClick
+            onClick = { onClickStationInput(SelectionMode.DEPARTURE) }
         )
         Icon(
             imageVector = Icons.Outlined.ArrowForward,
@@ -41,7 +41,7 @@ fun StationInputSection(
             label = "도착 정거장",
             value = route.arrivalStop?.name ?: "도착 정류장 선택",
             modifier = Modifier.weight(1f),
-            onClick = onArrivalStopClick
+            onClick = { onClickStationInput(SelectionMode.ARRIVAL) }
         )
     }
 }

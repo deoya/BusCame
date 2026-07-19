@@ -16,6 +16,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.kakao.vectormap.GestureType
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
+import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
@@ -24,6 +25,7 @@ import timber.log.Timber
 @Composable
 fun AppKakaoMap(
     modifier: Modifier = Modifier,
+    currentMapCenter: Pair<Double, Double>? = null,
     onMapReady: (KakaoMap) -> Unit,
     onLabelClick: (String) -> Unit = {},
 ) {
@@ -65,7 +67,15 @@ fun AppKakaoMap(
                 object : KakaoMapReadyCallback() {
                     override fun onMapReady(kakaoMap: KakaoMap) {
                         Timber.d("🗺️ [KakaoMap] 지도 렌더링 완료!")
-                        kakaoMap.moveCamera(CameraUpdateFactory.zoomTo(16))
+
+                        if (currentMapCenter != null) {
+                            val (lat, lng) = currentMapCenter
+                            val position =
+                                CameraUpdateFactory.newCenterPosition(LatLng.from(lat, lng), 16)
+                            kakaoMap.moveCamera(position)
+                        } else {
+                            kakaoMap.moveCamera(CameraUpdateFactory.zoomTo(16))
+                        }
 
                         kakaoMap.setGestureEnable(GestureType.Zoom, false)          // 두 손가락 줌 끄기
                         kakaoMap.setGestureEnable(
@@ -75,11 +85,11 @@ fun AppKakaoMap(
                         kakaoMap.setGestureEnable(
                             GestureType.Rotate,
                             false
-                        )        // 지도가 돌아가는 것도 막으려면 추가
+                        )
                         kakaoMap.setGestureEnable(
                             GestureType.Tilt,
                             false
-                        )          // 지도가 눕혀지는 것도 막으려면 추가
+                        )
                         kakaoMap.setOnLabelClickListener { _, _, label ->
                             currentOnLabelClick(label.labelId)
                             true

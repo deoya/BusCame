@@ -7,4 +7,5 @@ interface ScheduleRepository {
     suspend fun getSchedule(): ResultWrapper<WorkSchedule>
 
     suspend fun saveSchedule(schedule: WorkSchedule): ResultWrapper<Unit>
+
 }

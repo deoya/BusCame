@@ -8,7 +8,6 @@ import com.hye.domain.model.route.SelectionMode
 data class RouteState(
     val departureStop: BusStop? = null,  // 출발 정거장
     val arrivalStop: BusStop? = null, // 도착 정거장
-    val isBottomSheetOpen: Boolean = false, // 맵 선택 창 상태
     val selectionMode: SelectionMode = SelectionMode.NONE, // 지도 상태
 
     val currentMapCenter: Pair<Double, Double>? = null, // (위도, 경도)

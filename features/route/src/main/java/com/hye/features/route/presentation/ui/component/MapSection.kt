@@ -38,7 +38,7 @@ import timber.log.Timber
 @Composable
 fun MapSection(
     selectionMode: SelectionMode,
-    currentMapCenter: Pair<Double, Double>?,
+    currentMapCenter: Pair<Double, Double>? = null,
     nearbyStops: List<BusStop>,
     selectedBusStop: BusStop?,
     onMapCenterChanged: (Double, Double) -> Unit,
@@ -69,10 +69,13 @@ fun MapSection(
         map.moveCamera(CameraUpdateFactory.newCenterPosition(targetLatLng, 16))
     }
     // 2. 스마트 렌더링 및 스타일 생성 Effect
-    LaunchedEffect(kakaoMapInstance, nearbyStops) {
+    LaunchedEffect(kakaoMapInstance, nearbyStops, selectedBusStop) {
         val map = kakaoMapInstance ?: return@LaunchedEffect
         val manager = map.labelManager ?: return@LaunchedEffect
         val layer = manager.layer ?: return@LaunchedEffect
+
+        // API로 불러온 주변 정류장 리스트와 선택된 정거장 정보 합치기
+        val combinedStops = (nearbyStops + listOfNotNull(selectedBusStop)).distinctBy { it.nodeId }
 
         if (nearbyStops.isEmpty()) {
             layer.removeAll()
@@ -109,7 +112,7 @@ fun MapSection(
             )
         }
 
-        val newIds = nearbyStops.map { it.nodeId }.toSet()
+        val newIds = combinedStops.map { it.nodeId }.toSet()
 
         // 생명주기 등으로 리셋되었을 때 안전하게 동기화 복구
         if (mapReadyTrigger > 1) {
@@ -120,7 +123,7 @@ fun MapSection(
         idsToRemove.forEach { id -> layer.getLabel(id)?.let { layer.remove(it) } }
 
         // 새로운 핀 추가
-        val stopsToAdd = nearbyStops.filter { it.nodeId !in drawnMarkerIds }
+        val stopsToAdd = combinedStops.filter { it.nodeId !in drawnMarkerIds }
         stopsToAdd.forEach { stop ->
             // nodeId가 없거나 좌표가 이상하면 아예 무시
             if (stop.nodeId.isBlank() || stop.latitude == 0.0 || stop.longitude == 0.0) return@forEach
@@ -185,7 +188,7 @@ fun MapSection(
                     }
                 }
             },
-
+            currentMapCenter = currentMapCenter,
             onLabelClick = { clickedId ->
                 val clickedStop = nearbyStops.find { it.nodeId == clickedId }
                 if (clickedStop != null) {

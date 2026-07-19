@@ -30,14 +30,49 @@ class RouteViewModel @Inject constructor(
     // 마지막으로 API를 호출했던 좌표
     private var lastFetchedLocation: Pair<Double, Double>? = null
 
+    init {
+        loadSavedRouteStops()
+    }
+
+    private fun loadSavedRouteStops() {
+        viewModelScope.launch(commonCeh) {
+            when (val result = busStopsUseCase.getSavedRouteStopsUseCase()) {
+                is ResultWrapper.Success -> {
+                    val (departure, arrival) = result.data
+                    Timber.d("💾 [RouteViewModel] 로컬 데이터 로드 성공 - 출발지: ${departure?.name}, 도착지: ${arrival?.name}")
+
+                    _state.update { currentState ->
+                        currentState.copy(
+                            departureStop = departure,
+                            arrivalStop = arrival,
+                            currentMapCenter = departure?.let { it.latitude to it.longitude }
+                        )
+                    }
+                }
+
+                is ResultWrapper.Error -> {
+                    Timber.e(result.exception, "💥 [RouteViewModel] 로컬 데이터 로드 실패")
+                }
+            }
+        }
+    }
+
     fun processIntent(intent: RouteIntent) {
         when (intent) {
-            is RouteIntent.ClickDepartureInput -> {
-                _state.update { it.copy(selectionMode = SelectionMode.DEPARTURE) }
-            }
+            is RouteIntent.ClickStationInput -> {
+                val existingStop =
+                    if (intent.mode == SelectionMode.DEPARTURE) _state.value.departureStop else _state.value.arrivalStop
 
-            is RouteIntent.ClickArrivalInput -> {
-                _state.update { it.copy(selectionMode = SelectionMode.ARRIVAL) }
+                _state.update {
+                    it.copy(
+                        selectionMode = intent.mode, selectedBusStop = existingStop,
+                        currentMapCenter = existingStop?.let { stop -> stop.latitude to stop.longitude }
+                            ?: it.currentMapCenter)
+                }
+                if (existingStop != null) {
+                    fetchNearbyStops(existingStop.latitude, existingStop.longitude)
+                }
+
             }
 
             is RouteIntent.MapCenterChanged -> {
@@ -46,7 +81,6 @@ class RouteViewModel @Inject constructor(
                         currentMapCenter = Pair(
                             intent.lat, intent.lng
                         ),
-                        selectedBusStop = null
                     )
                 }
                 searchJob?.cancel()
@@ -76,10 +110,8 @@ class RouteViewModel @Inject constructor(
             is RouteIntent.CancelSelection -> {
                 _state.update {
                     it.copy(
-                        selectionMode = SelectionMode.NONE, // 모달 닫기
-                        selectedBusStop = null,             // 핀 선택 초기화
-                        searchQuery = "",                   // 검색어 초기화 (선택사항)
-                        searchResults = UiStateResult.Idle // 검색 결과 초기화 (선택사항)
+                        searchQuery = "",
+                        searchResults = UiStateResult.Idle
                     )
                 }
             }
@@ -146,16 +178,28 @@ class RouteViewModel @Inject constructor(
 
         if (mode == SelectionMode.NONE) return
 
-        _state.update { state ->
-            val updatedState = when (mode) {
-                SelectionMode.DEPARTURE -> state.copy(departureStop = selectedStop)
-                SelectionMode.ARRIVAL -> state.copy(arrivalStop = selectedStop)
-                else -> state
+        viewModelScope.launch(commonCeh) {
+
+            val saveResult = busStopsUseCase.saveRouteUseCase(selectedStop, mode)
+
+            if (saveResult is ResultWrapper.Success) {
+                Timber.d("💾 [RouteViewModel] 로컬 저장 완료: ${selectedStop.name}")
+
+                _state.update { state ->
+                    val updatedState = when (mode) {
+                        SelectionMode.DEPARTURE -> state.copy(departureStop = selectedStop)
+                        SelectionMode.ARRIVAL -> state.copy(arrivalStop = selectedStop)
+                        else -> state
+                    }
+                    updatedState.copy(
+                        selectionMode = SelectionMode.NONE,
+                        selectedBusStop = null
+                    )
+                }
+            } else if (saveResult is ResultWrapper.Error) {
+                Timber.e(saveResult.exception, "💥 [RouteViewModel] 로컬 저장 실패")
+                showToast("정류장을 저장하는 중 오류가 발생했습니다.")
             }
-            updatedState.copy(
-                selectionMode = SelectionMode.NONE,
-                selectedBusStop = null
-            )
         }
     }
 
