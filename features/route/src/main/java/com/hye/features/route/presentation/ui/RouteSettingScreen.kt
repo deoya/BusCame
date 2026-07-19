@@ -10,6 +10,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hye.common.design.base.BaseScreenTemplate
@@ -43,6 +45,7 @@ fun RouteSettingScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var displayStops by remember { mutableStateOf<List<BusStop>>(emptyList()) }
+    var showMapScreenDialog by remember { mutableStateOf(false) }
     var showSelectionDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.nearbyStopsState) {
@@ -67,23 +70,17 @@ fun RouteSettingScreen(
             // 정거장 선택 영역
             StationInputSection(
                 route = state,
-                onDepartureStopClick = {
-                    viewModel.processIntent(
-                        RouteIntent.ClickDepartureInput,
-                    )
-                },
-                onArrivalStopClick = {
-                    viewModel.processIntent(
-                        RouteIntent.ClickArrivalInput,
-                    )
+                onClickStationInput = {
+                    showMapScreenDialog = true
+                    viewModel.processIntent(RouteIntent.ClickStationInput(it))
                 },
             )
         }
-
         FullScreenOverlay(
-            visible = state.selectionMode != SelectionMode.NONE,
+            visible = showMapScreenDialog,
             title = "정류장 위치 선택",
-            onDismissRequest = { viewModel.processIntent(RouteIntent.CancelSelection) }
+            onDismissRequest = { viewModel.processIntent(RouteIntent.CancelSelection) },
+            onback = { showMapScreenDialog = false },
         ) {
             Column(
                 modifier = Modifier.fillMaxHeight(0.9f)
@@ -103,7 +100,7 @@ fun RouteSettingScreen(
                         },
                         onBusStopPinClick = { stop ->
                             viewModel.processIntent(RouteIntent.ClickBusStopPin(stop))
-                        },
+                        }
                     )
                 }
                 PlaceSearchSection(
@@ -118,8 +115,8 @@ fun RouteSettingScreen(
                 )
             }
         }
-        if (showSelectionDialog && state.selectedBusStop != null) {
-            androidx.compose.ui.window.Dialog(
+        if (showSelectionDialog) {
+            Dialog(
                 onDismissRequest = { showSelectionDialog = false }
             ) {
                 AppCard(
@@ -146,7 +143,8 @@ fun RouteSettingScreen(
 
                         Button(
                             onClick = {
-                                showSelectionDialog = false // 창 닫기
+                                showMapScreenDialog = false // 창 닫기
+                                showSelectionDialog = false
                                 viewModel.processIntent(RouteIntent.ConfirmSelection)
                             },
                             modifier = Modifier.fillMaxWidth(),
@@ -155,7 +153,7 @@ fun RouteSettingScreen(
                             Text("확인", color = DesignTheme.colors.onPrimary)
                         }
 
-                        androidx.compose.material3.TextButton(
+                        TextButton(
                             onClick = { showSelectionDialog = false }
                         ) {
                             Text("취소", color = DesignTheme.colors.border)

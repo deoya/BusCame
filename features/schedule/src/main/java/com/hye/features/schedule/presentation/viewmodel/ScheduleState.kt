@@ -7,5 +7,4 @@ import com.hye.domain.model.schedule.WorkSchedule
 data class ScheduleState(
     val schedule: WorkSchedule = WorkSchedule(),
     val scheduleLoadState: UiStateResult<WorkSchedule> = UiStateResult.Idle,
-    val isSaving: Boolean = false
 )

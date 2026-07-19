@@ -50,7 +50,7 @@ fun ScheduleScreen(
     BaseScreenTemplate(
         screenName = "ScheduleScreen",
         viewModel = viewModel,
-        isLoading = state.scheduleLoadState is UiStateResult.Loading || state.isSaving,
+        isLoading = state.scheduleLoadState is UiStateResult.Loading,
         errorMessage = null,
     ) {
         AppCard(verticalArrangement = Arrangement.spacedBy(DesignTheme.dimens.spaceSm)) {

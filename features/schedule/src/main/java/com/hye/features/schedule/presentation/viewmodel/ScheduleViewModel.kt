@@ -7,6 +7,8 @@ import com.hye.domain.model.common.UiStateResult
 import com.hye.domain.model.schedule.DayOfWeek
 import com.hye.domain.usecase.schedule.ScheduleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -29,6 +32,8 @@ class ScheduleViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<ScheduleEffect>()
     val effect: SharedFlow<ScheduleEffect> = _effect.asSharedFlow()
 
+    private var saveJob: Job? = null
+
     init {
         loadSavedSchedule()
     }
@@ -40,7 +45,6 @@ class ScheduleViewModel @Inject constructor(
             is ScheduleIntent.ClickOffworkTime -> sendEffect(ScheduleEffect.ShowOffworkTimePicker)
             is ScheduleIntent.UpdateCommuteTime -> updateCommuteTime(intent.hour, intent.minute)
             is ScheduleIntent.UpdateOffworkTime -> updateOffworkTime(intent.hour, intent.minute)
-            is ScheduleIntent.SaveSchedule -> saveSchedule()
         }
     }
 
@@ -75,29 +79,30 @@ class ScheduleViewModel @Inject constructor(
             val newDays = if (currentDays.contains(day)) currentDays - day else currentDays + day
             currentState.copy(schedule = currentState.schedule.copy(activeDays = newDays))
         }
+        saveScheduleAutomatically()
     }
 
     private fun updateCommuteTime(hour: Int, minute: Int) {
         _state.update {
             it.copy(schedule = it.schedule.copy(commuteHour = hour, commuteMinute = minute))
         }
+        saveScheduleAutomatically()
     }
 
     private fun updateOffworkTime(hour: Int, minute: Int) {
         _state.update {
             it.copy(schedule = it.schedule.copy(offworkHour = hour, offworkMinute = minute))
         }
+        saveScheduleAutomatically()
     }
 
-    private fun saveSchedule() {
-        viewModelScope.launch(commonCeh) {
-            _state.update { it.copy(isSaving = true) }
+    private fun saveScheduleAutomatically() {
+        saveJob?.cancel() // 0.3초 안에 다시 요청이 오면 기존 저장 작업 취소 (연타 방어)
 
+        saveJob = viewModelScope.launch(commonCeh) {
+            delay(300) // 300ms 대기 후 최종 1회만 디스크 쓰기 실행
             scheduleUseCase.saveScheduleUseCase(_state.value.schedule)
-
-            _state.update { it.copy(isSaving = false) }
-
-            showToast("기기에 근무 일정이 안전하게 저장되었습니다.")
+            Timber.d("💾 [ScheduleViewModel] 일정 자동 저장 완료: ${_state.value.schedule}")
         }
     }
 

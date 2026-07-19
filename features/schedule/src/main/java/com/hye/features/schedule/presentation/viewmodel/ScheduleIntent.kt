@@ -11,5 +11,4 @@ sealed class ScheduleIntent {
     // 시간 업데이트 용
     data class UpdateCommuteTime(val hour: Int, val minute: Int) : ScheduleIntent()
     data class UpdateOffworkTime(val hour: Int, val minute: Int) : ScheduleIntent()
-    object SaveSchedule : ScheduleIntent()
 }
