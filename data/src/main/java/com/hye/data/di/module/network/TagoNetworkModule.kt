@@ -1,6 +1,6 @@
 package com.hye.data.di.module.network
 
-import com.hye.data.BuildConfig
+import com.hye.data.di.qualifier.TagoBusSttnApiKey
 import com.hye.data.di.qualifier.TagoOkHttp
 import com.hye.data.di.qualifier.TagoRetrofit
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -13,7 +13,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -23,28 +22,29 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object TagoNetworkModule {
-    private const val BASE_URL = "https://apis.data.go.kr/"
+
+    private const val TAGO_BASE_URL = "https://apis.data.go.kr/"
 
     @Provides
     @Singleton
     @TagoOkHttp
-    fun provideTagoOkHttpClient(): OkHttpClient {
-
-        val logger = HttpLoggingInterceptor {
-            Timber.tag("OkHttp").d(it)
-        }.apply {
-            level =
-                if (BuildConfig.DEBUG)
-                    HttpLoggingInterceptor.Level.BODY
-                else
-                    HttpLoggingInterceptor.Level.NONE
-        }
-
+    fun provideTagoOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        @TagoBusSttnApiKey apiKey: String
+    ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(logger)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val url = original.url.newBuilder()
+                    .addQueryParameter("serviceKey", apiKey)
+                    .addQueryParameter("_type", "json") // 응답 타입 강제
+                    .build()
+                chain.proceed(original.newBuilder().url(url).build())
+            }
             .build()
     }
 
@@ -57,7 +57,7 @@ object TagoNetworkModule {
     ): Retrofit {
 
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(TAGO_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(
                 json.asConverterFactory(

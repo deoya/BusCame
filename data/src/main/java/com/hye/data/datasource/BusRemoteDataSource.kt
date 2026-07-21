@@ -1,6 +1,6 @@
 package com.hye.data.datasource
 
-import com.hye.data.remote.dto.station.bus.common.BusSttnItemDto
+import com.hye.data.remote.dto.bus.common.BusSttnItemDto
 
 interface BusRemoteDataSource {
     val priority: Int

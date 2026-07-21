@@ -1,6 +1,6 @@
 package com.hye.data.di.module.network
 
-import com.hye.data.BuildConfig
+import com.hye.data.di.qualifier.SeoulBusApiKey
 import com.hye.data.di.qualifier.SeoulOkHttp
 import com.hye.data.di.qualifier.SeoulRetrofit
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -13,7 +13,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -21,21 +20,31 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object SeoulNetworkModule {
 
+    private const val SEOUL_BASE_URL = "http://ws.bus.go.kr/"
+
     @Provides
     @Singleton
     @SeoulOkHttp
-    fun provideSeoulOkHttpClient(): OkHttpClient {
-        val logger = HttpLoggingInterceptor { message -> Timber.tag("SeoulApi").d(message) }
-            .apply {
-                level =
-                    if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
-            }
-
+    fun provideSeoulOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        @SeoulBusApiKey apiKey: String
+    ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(logger)
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val url = original.url.newBuilder()
+                    .addQueryParameter("serviceKey", apiKey)
+                    .addQueryParameter("resultType", "json") // 응답 타입 강제
+                    .build()
+                chain.proceed(original.newBuilder().url(url).build())
+            }
             .build()
+
+
     }
 
     @Provides
@@ -46,7 +55,7 @@ object SeoulNetworkModule {
         json: Json
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://ws.bus.go.kr/")
+            .baseUrl(SEOUL_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()

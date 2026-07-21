@@ -1,4 +1,4 @@
-package com.hye.data.remote.dto.station.bus.common
+package com.hye.data.remote.dto.bus.common
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
