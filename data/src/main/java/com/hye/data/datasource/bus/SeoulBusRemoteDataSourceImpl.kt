@@ -1,6 +1,5 @@
-package com.hye.data.datasource.seoul
+package com.hye.data.datasource.bus
 
-import com.hye.data.datasource.BusRemoteDataSource
 import com.hye.data.remote.api.SeoulBusApi
 import com.hye.data.remote.dto.bus.common.BusSttnItemDto
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.hye.data.datasource
+package com.hye.data.datasource.bus
 
 import com.hye.data.remote.dto.bus.common.BusSttnItemDto
 
@@ -11,4 +11,5 @@ interface BusRemoteDataSource {
         lat: Double,
         lng: Double
     ): List<BusSttnItemDto>
+
 }

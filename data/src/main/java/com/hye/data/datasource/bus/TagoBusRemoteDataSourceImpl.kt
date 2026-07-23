@@ -1,6 +1,5 @@
-package com.hye.data.datasource.tago
+package com.hye.data.datasource.bus
 
-import com.hye.data.datasource.BusRemoteDataSource
 import com.hye.data.remote.api.TagoBusApi
 import com.hye.data.remote.dto.bus.common.BusSttnItemDto
 import javax.inject.Inject
@@ -26,4 +25,6 @@ class TagoBusRemoteDataSourceImpl @Inject constructor(
             longitude = lng
         ).response.body?.items ?: emptyList()
     }
+
+
 }
