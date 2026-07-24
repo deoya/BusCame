@@ -1,4 +1,4 @@
-package com.hye.data.remote.dto.station.bus.common
+package com.hye.data.remote.dto.bus.common
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
@@ -6,7 +6,7 @@ import kotlinx.serialization.json.JsonNames
 // SeoulBus: headerCd / headerMsg
 // TAGO    : resultCode / resultMsg
 @Serializable
-data class BusSttnHeader(
+data class CommonBusHeader(
     @JsonNames("headerCd") val resultCode: String,
     @JsonNames("headerMsg") val resultMsg: String
 ) {

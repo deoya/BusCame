@@ -10,6 +10,6 @@ class SaveRouteUseCase @Inject constructor(
     private val routeRepository: BusRepository
 ) {
     suspend operator fun invoke(stop: BusStop, mode: SelectionMode): ResultWrapper<Unit> {
-        return routeRepository.saveRouteStop(stop, mode)
+        return routeRepository.saveBusStopInfo(stop, mode)
     }
 }

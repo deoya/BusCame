@@ -1,4 +1,4 @@
-package com.hye.data.remote.dto.station.bus.tago
+package com.hye.data.remote.dto.bus.tago.station
 
 import kotlinx.serialization.Serializable
 

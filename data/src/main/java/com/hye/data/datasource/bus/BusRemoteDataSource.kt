@@ -1,6 +1,6 @@
-package com.hye.data.datasource
+package com.hye.data.datasource.bus
 
-import com.hye.data.remote.dto.station.bus.common.BusSttnItemDto
+import com.hye.data.remote.dto.bus.common.BusSttnItemDto
 
 interface BusRemoteDataSource {
     val priority: Int
@@ -11,4 +11,5 @@ interface BusRemoteDataSource {
         lat: Double,
         lng: Double
     ): List<BusSttnItemDto>
+
 }

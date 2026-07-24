@@ -1,8 +1,8 @@
 package com.hye.data.di.module.datasource
 
-import com.hye.data.datasource.BusRemoteDataSource
-import com.hye.data.datasource.seoul.SeoulBusRemoteDataSourceImpl
-import com.hye.data.datasource.tago.TagoBusRemoteDataSourceImpl
+import com.hye.data.datasource.bus.BusRemoteDataSource
+import com.hye.data.datasource.bus.SeoulBusRemoteDataSourceImpl
+import com.hye.data.datasource.bus.TagoBusRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

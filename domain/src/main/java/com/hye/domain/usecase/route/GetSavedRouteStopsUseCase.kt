@@ -9,6 +9,6 @@ class GetSavedRouteStopsUseCase @Inject constructor(
     private val busRepository: BusRepository
 ) {
     suspend operator fun invoke(): ResultWrapper<Pair<BusStop?, BusStop?>> {
-        return busRepository.getSavedRouteStops()
+        return busRepository.getSavedRouteInfos()
     }
 }

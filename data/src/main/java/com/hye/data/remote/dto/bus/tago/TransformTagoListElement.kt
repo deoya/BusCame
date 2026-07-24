@@ -1,6 +1,6 @@
-package com.hye.data.remote.dto.station.bus.tago
+package com.hye.data.remote.dto.bus.tago
 
-import com.hye.data.remote.dto.station.bus.common.BusSttnItemDto
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -8,15 +8,14 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.JsonTransformingSerializer
 
+
 //공공데이터 Object/Array 파싱 트랩 방어용 커스텀 시리얼라이저
-object TagoBusSttnListSerializer : JsonTransformingSerializer<List<BusSttnItemDto>>(
-    tSerializer = ListSerializer(BusSttnItemDto.serializer())
-) {
+open class TagoListSerializer<T>(
+    dataSerializer: KSerializer<T>
+) : JsonTransformingSerializer<List<T>>(ListSerializer(dataSerializer)) {
     override fun transformDeserialize(element: JsonElement): JsonElement {
         // 케이스 1: 결과가 0개일 때 ("" 로 내려옴) -> 빈 배열 반환
-        if (element is JsonPrimitive && element.isString) {
-            return JsonArray(emptyList())
-        }
+        if (element is JsonPrimitive && element.isString) return JsonArray(emptyList())
 
         // 객체 형태일 때 (케이스 2 & 3)
         if (element is JsonObject) {

@@ -1,6 +1,5 @@
 package com.hye.data.di.module.network
 
-import com.hye.data.BuildConfig
 import com.hye.data.di.qualifier.KakaoOkHttp
 import com.hye.data.di.qualifier.KakaoRestApiKey
 import com.hye.data.di.qualifier.KakaoRetrofit
@@ -14,7 +13,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import timber.log.Timber
 import javax.inject.Singleton
 
 @Module
@@ -25,21 +23,11 @@ object KakaoNetworkModule {
     @Singleton
     @KakaoOkHttp
     fun provideKakaoOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
         @KakaoRestApiKey apiKey: String
     ): OkHttpClient {
-
-        val logger = HttpLoggingInterceptor {
-            Timber.tag("KakaoApi").d(it)
-        }.apply {
-            level =
-                if (BuildConfig.DEBUG)
-                    HttpLoggingInterceptor.Level.BODY
-                else
-                    HttpLoggingInterceptor.Level.NONE
-        }
-
         return OkHttpClient.Builder()
-            .addInterceptor(logger)
+            .addInterceptor(loggingInterceptor)
             .addInterceptor { chain ->
 
                 val request = chain.request()
